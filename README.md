@@ -24,15 +24,12 @@ Make sure you have installed the follow prerequisites
 ### Setup
 
 ```sh
-corepack enable
-corepack prepare pnpm@9.0.1 --activate
-
-pnpm recursive install
+docker compose build
 ```
 
 ## Usage
 
-To start everything run:
+To start everything run locally:
 
 ```sh
 docker-compose up
@@ -47,6 +44,39 @@ docker-compose up
 ## Testing
 
 ## Deployment
+
+For production deployment, it require setup of a complete pipeline for the production build and deployment.
+Here I will given an example of how to deploy this app with AWS as provider, given that the infrastructure is ready
+
+The client can be built and update to S3 and serve with AWS Cloudfront.
+The server can be built for production and then host it on any cloud service, such as AWS ECS.
+
+### Web
+
+1. Build the artifact`
+
+    ```sh
+    pnpm run build
+    ```
+
+2. Upload to AWS S3 bucket
+
+### Server
+
+1. Build the image
+
+    ```sh
+    docker buildx build
+    --tag api
+    --target prod
+    --build-arg PORT=9080
+    --build-arg HOST=0.0.0.0
+    ./server
+    ```
+
+2. Push it to AWS ECR
+
+3. Deploy with AWS ECS
 
 ## Credits and Acknowledgments
 
