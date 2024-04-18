@@ -11,7 +11,7 @@ services:
         environment:
             - DATABASE_URL=postgres://postgres:password@db:5432/postgres
             - PORT=9080
-            - HOST=0.0.0.0
+            - HOSTNAME=0.0.0.0
 
     client:
         build:

@@ -70,7 +70,7 @@ The server can be built for production and then host it on any cloud service, su
     --tag api
     --target prod
     --build-arg PORT=9080
-    --build-arg HOST=0.0.0.0
+    --build-arg HOSTNAME=0.0.0.0
     ./server
     ```
 
