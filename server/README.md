@@ -5,16 +5,20 @@ This project was bootstrapped with Fastify-CLI.
 
 In the project directory, you can run:
 
-### `npm run dev`
+### `pnpm dev`
 
 To start the app in dev mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Open [http://localhost:9080](http://localhost:9080`) to view it in the browser.
 
-### `npm start`
+### `pnpm build`
+
+To build from TypeScript to JavaScript in /dist
+
+### `pnpm start`
 
 For production mode
 
-### `npm run test`
+### `pnpm test`
 
 Run the test cases.
 
