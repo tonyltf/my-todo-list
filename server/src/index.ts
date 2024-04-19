@@ -1,8 +1,10 @@
 import fastify from 'fastify';
-import todo from './routes/todo';
+import fastifyPostgres from '@fastify/postgres';
 import fastifySwagger from '@fastify/swagger';
-import fastifySwaggerUi from '@fastify/swagger-ui'
+import fastifySwaggerUi from '@fastify/swagger-ui';
+
 import { env } from './config';
+import userRoute from './routes/user.route';
 
 const server = fastify();
 
@@ -18,7 +20,7 @@ const main = async () => {
       },
       servers: [
         {
-          url: `http://localhost`,
+          url: `http://localhost:${env.PORT}`,
           description: 'Development server'
         }
       ],
@@ -32,7 +34,7 @@ const main = async () => {
         description: 'Find more info here'
       }
     }
-  })
+  });
 
   await server.register(fastifySwaggerUi, {
     routePrefix: '/documentation',
@@ -42,18 +44,23 @@ const main = async () => {
       deepLinking: false
     },
     uiHooks: {
-      onRequest: function (request, reply, next) { next() },
-      preHandler: function (request, reply, next) { next() }
+      onRequest: function (request, reply, next) { next(); },
+      preHandler: function (request, reply, next) { next(); }
     },
     staticCSP: true,
     transformStaticCSP: (header) => header
-  })
+  });
+
+
+  server.register(fastifyPostgres, {
+    connectionString: env.DATABASE_URL,
+  });
 
   server.get('/health', async () => {
     return 'OK';
   });
 
-  server.register(todo, { prefix: '/v1' });
+  server.register(userRoute, { prefix: '/v1' });
 
   server.listen({ host: env.HOSTNAME, port: env.PORT }, (err, address) => {
     if (err) {

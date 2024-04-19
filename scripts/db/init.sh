@@ -19,10 +19,11 @@ psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -a << EOF
         updated_at TIMESTAMP DEFAULT NOW()
     );
 
-    CREATE TABLE IF NOT EXISTS duty (
+    CREATE TABLE IF NOT EXISTS todo (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         name VARCHAR(255) NOT NULL DEFAULT false,
         user_id UUID REFERENCES "user"(id),
+        is_enabled BOOLEAN DEFAULT TRUE,
         is_completed BOOLEAN DEFAULT FALSE,
         completed_at TIMESTAMP,
         created_at TIMESTAMP DEFAULT NOW(),
