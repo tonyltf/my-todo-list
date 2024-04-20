@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 
 import { TodoService } from "../services/todo.service";
-import { CreateTodoBody, UpdateTodoBody } from "../types";
+import { CreateTodoBody, Todo, TodoDbModel, UpdateTodoBody } from "../types";
 
 export class TodoController {
     todoService: TodoService;
@@ -10,18 +10,30 @@ export class TodoController {
         this.todoService = todoService;
     }
 
+    static transformTodo(todos: TodoDbModel[]): Todo[] {
+        return todos.map((todo) => ({
+            id: todo.id,
+            name: todo.name,
+            userId: todo.user_id,
+            isEnabled: todo.is_enabled,
+            isCompleted: todo.is_completed,
+            completedAt: todo.completed_at,
+            createdAt: todo.created_at,
+            updatedAt: todo.updated_at,
+        }));
+    }
+
     async getTodo(request: FastifyRequest<{ Params: { userId: string } }>, reply: FastifyReply) {
         const { userId } = request.params;
         const allTodo = await this.todoService.getTodoForUser({ userId });
-        console.log({ allTodo });
-        reply.code(200).header('Content-Type', 'application/json').send(allTodo);
+        reply.status(200).send(TodoController.transformTodo(allTodo));
     }
 
     async createTodo(request: FastifyRequest<{ Params: { userId: string }; Body: CreateTodoBody }>, reply: FastifyReply) {
         const { userId } = request.params;
         const todoData = request.body;
         const newTodoId = await this.todoService.createTodoForUser({ userId, todoData });
-        reply.code(201).send({ id: newTodoId });
+        reply.status(201).send({ id: newTodoId });
     }
 
     async updateTodo(request: FastifyRequest<{ Params: { userId: string; todoId: string; }; Body: UpdateTodoBody }>, reply: FastifyReply) {
@@ -30,7 +42,7 @@ export class TodoController {
 
         const existingTodo = await this.todoService.getTodoById({ userId, todoId });
         if (!existingTodo) {
-            reply.code(404).send({ message: 'Todo not found' });
+            reply.status(404).send({ message: 'Todo not found' });
             return;
         }
 
@@ -41,10 +53,19 @@ export class TodoController {
                 ...todoData,
             }
         });
-        reply.code(204).send();
+        reply.status(204).send();
     }
 
-    async deleteTodo(request: FastifyRequest, reply: FastifyReply) {
-        return 'TODO';
+    async deleteTodo(request: FastifyRequest<{ Params: { userId: string; todoId: string; }; }>, reply: FastifyReply) {
+        const { userId, todoId } = request.params;
+
+        const existingTodo = await this.todoService.getTodoById({ userId, todoId });
+        if (!existingTodo) {
+            reply.status(404).send({ message: 'Todo not found' });
+            return;
+        }
+
+        await this.todoService.deleteTodo({ userId, todoId });
+        reply.status(204).send();
     }
 }

@@ -11,6 +11,6 @@ export class UserController {
 
     async createUser(_request: FastifyRequest, reply: FastifyReply) {
         const newUserId = await this.userService.createUser();
-        reply.code(201).send({ id: newUserId });
+        reply.status(201).send({ id: newUserId });
     }
 }

@@ -5,6 +5,7 @@ import fastifySwaggerUi from '@fastify/swagger-ui';
 
 import { env } from './config';
 import userRoute from './routes/user.route';
+import todoRoute from './routes/todo.route';
 
 const server = fastify();
 
@@ -14,8 +15,8 @@ const main = async () => {
     openapi: {
       openapi: '3.0.0',
       info: {
-        title: 'Test swagger',
-        description: 'Testing the Fastify swagger API',
+        title: 'Todo API',
+        description: 'A simple API to todo list',
         version: '0.1.0'
       },
       servers: [
@@ -25,6 +26,7 @@ const main = async () => {
         }
       ],
       tags: [
+        { name: 'user', description: 'User related end-points' },
         { name: 'todo', description: 'TODO list related end-points' },
       ],
       components: {
@@ -51,6 +53,14 @@ const main = async () => {
     transformStaticCSP: (header) => header
   });
 
+  server.setErrorHandler(function (error, request, reply) {
+    if (error.validation) {
+      reply.status(400).send({ error: 'Validation failed', details: error.validation });
+    } else {
+      reply.send(error);
+    }
+  });
+
 
   server.register(fastifyPostgres, {
     connectionString: env.DATABASE_URL,
@@ -61,6 +71,7 @@ const main = async () => {
   });
 
   server.register(userRoute, { prefix: '/v1' });
+  server.register(todoRoute, { prefix: '/v1' });
 
   server.listen({ host: env.HOSTNAME, port: env.PORT }, (err, address) => {
     if (err) {
