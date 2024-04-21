@@ -1,4 +1,5 @@
-import fastify from 'fastify';
+import fastify, { FastifyRequest } from 'fastify';
+import fastifyCors, { FastifyCorsOptions } from '@fastify/cors';
 import fastifyPostgres from '@fastify/postgres';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
@@ -64,6 +65,22 @@ const main = async () => {
 
   server.register(fastifyPostgres, {
     connectionString: env.DATABASE_URL,
+  });
+
+  server.register(fastifyCors, () => {
+    return (req: FastifyRequest, callback: (error: Error | null, corsOptions?: FastifyCorsOptions) => void) => {
+      const corsOptions: FastifyCorsOptions = {
+        origin: env.CORS_ORIGINS,
+      };
+
+      // do not include CORS headers for requests from localhost
+      if (req.headers.origin && /^localhost$/m.test(req.headers.origin)) {
+        corsOptions.origin = false;
+      }
+
+      // callback expects two parameters: error and options
+      callback(null, corsOptions);
+    };
   });
 
   server.get('/health', async () => {
