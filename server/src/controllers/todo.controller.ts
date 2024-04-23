@@ -10,8 +10,8 @@ export class TodoController {
         this.todoService = todoService;
     }
 
-    static transformTodo(todos: TodoDbModel[]): Todo[] {
-        return todos.map((todo) => ({
+    static transformTodo(todo: TodoDbModel): Todo {
+        return {
             id: todo.id,
             name: todo.name,
             userId: todo.user_id,
@@ -20,20 +20,24 @@ export class TodoController {
             completedAt: todo.completed_at,
             createdAt: todo.created_at,
             updatedAt: todo.updated_at,
-        }));
+        };
     }
 
     async getTodo(request: FastifyRequest<{ Params: { userId: string } }>, reply: FastifyReply) {
         const { userId } = request.params;
         const allTodo = await this.todoService.getTodoForUser({ userId });
-        reply.status(200).send(TodoController.transformTodo(allTodo));
+        reply.status(200).send(allTodo.map(todo => TodoController.transformTodo(todo)));
     }
 
     async createTodo(request: FastifyRequest<{ Params: { userId: string }; Body: CreateTodoBody }>, reply: FastifyReply) {
         const { userId } = request.params;
         const todoData = request.body;
-        const newTodoId = await this.todoService.createTodoForUser({ userId, todoData });
-        reply.status(201).send({ id: newTodoId });
+        const newTodo = await this.todoService.createTodoForUser({ userId, todoData });
+        if (!newTodo) {
+            reply.status(500).send({ message: 'Failed to create todo' });
+            return;
+        }
+        reply.status(201).send(TodoController.transformTodo(newTodo));
     }
 
     async updateTodo(request: FastifyRequest<{ Params: { userId: string; todoId: string; }; Body: UpdateTodoBody }>, reply: FastifyReply) {
@@ -48,8 +52,8 @@ export class TodoController {
 
         await this.todoService.updateTodo({
             userId, todoId, todoData: {
-                name: todoData.name,
-                isCompleted: todoData.isCompleted,
+                name: existingTodo.name,
+                isCompleted: existingTodo.is_completed,
                 ...todoData,
             }
         });

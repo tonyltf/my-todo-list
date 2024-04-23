@@ -36,15 +36,15 @@ export class TodoService {
         }
     }
 
-    async createTodoForUser({ userId, todoData }: { userId: string, todoData: CreateTodoBody }): Promise<string | void> {
+    async createTodoForUser({ userId, todoData }: { userId: string, todoData: CreateTodoBody }): Promise<TodoDbModel | void> {
         const client = await this.fastify.pg.connect();
         try {
-            const { rows } = await client.query<{ id: string }>(`
+            const { rows } = await client.query<TodoDbModel>(`
                 INSERT INTO todo (name, user_id, is_completed, created_at, updated_at)
                 VALUES ($1, $2, false, current_timestamp, current_timestamp)
-                RETURNING id
+                RETURNING *;
                 `, [todoData.name, userId]);
-            return rows[0].id;
+            return rows[0];
         } catch (error) {
             // TODO: use logger instead of console.error
             console.error(error);
@@ -58,10 +58,10 @@ export class TodoService {
         try {
             const { rows } = await client.query<{ id: string }>(`
                 UPDATE todo
-                SET name = $1, isCompleted = $2, updated_at = current_timestamp
-                WHERE id = $3 AND user_id = $4
-                RETURNING id
-            `, [todoData.name, todoData.isCompleted, todoId, userId]);
+                SET name = $1, is_completed = $2, completed_at = $3, updated_at = current_timestamp
+                WHERE id = $4 AND user_id = $5
+                RETURNING id;
+            `, [todoData.name, todoData.isCompleted, todoData.isCompleted ? new Date() : null, todoId, userId]);
             return rows[0].id;
         } catch (error) {
             // TODO: use logger instead of console.error
@@ -77,7 +77,7 @@ export class TodoService {
             const { rows } = await client.query<{ id: string }>(`
                 UPDATE todo
                 SET is_enabled = false, updated_at = current_timestamp
-                WHERE id = $3 AND user_id = $4
+                WHERE id = $1 AND user_id = $2
                 RETURNING id
             `, [todoId, userId]);
             return rows[0].id;

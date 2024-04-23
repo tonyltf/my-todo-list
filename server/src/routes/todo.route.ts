@@ -32,11 +32,11 @@ export default async function (fastify: FastifyInstance) {
                             userId: { type: 'string', format: 'uuid' },
                             isEnabled: { type: 'boolean' },
                             isCompleted: { type: 'boolean' },
-                            completedAt: { type: 'string', format: 'date-time' },
+                            completedAt: { type: 'string', format: 'date-time', nullable: true },
                             createdAt: { type: 'string', format: 'date-time' },
                             updatedAt: { type: 'string', format: 'date-time' }
                         },
-                        required: ['id', 'name', 'isCompleted', 'createdAt', 'updatedAt']
+                        required: ['id', 'name', 'userId', 'isEnabled', 'isCompleted', 'completedAt', 'createdAt', 'updatedAt']
                     }
                 },
                 404: {
@@ -79,10 +79,25 @@ export default async function (fastify: FastifyInstance) {
                     description: 'Successful response',
                     type: 'object',
                     properties: {
-                        id: { type: 'string' }
+                        id: { type: 'string' },
+                        name: { type: 'string' },
+                        userId: { type: 'string' },
+                        isEnabled: { type: 'boolean' },
+                        isCompleted: { type: 'boolean' },
+                        completedAt: { type: 'string', format: 'date-time', nullable: true },
+                        createdAt: { type: 'string', format: 'date-time' },
+                        updatedAt: { type: 'string', format: 'date-time' }
+                    },
+                    required: ['id', 'name', 'userId', 'isEnabled', 'isCompleted', 'completedAt', 'createdAt', 'updatedAt']
+                },
+                500: {
+                    description: 'Failed to create todo',
+                    type: 'object',
+                    properties: {
+                        message: { type: 'string' }
                     }
-                }
-            },
+                },
+            }
         }
     },
         (request: FastifyRequest<{ Params: { userId: string }; Body: CreateTodoBody }>, reply) => {
@@ -147,13 +162,6 @@ export default async function (fastify: FastifyInstance) {
                     todoId: { type: 'string' }
                 },
                 required: ['userId', 'todoId']
-            },
-            body: {
-                type: 'object',
-                properties: {
-                    name: { type: 'string' },
-                    isCompleted: { type: 'boolean' }
-                }
             },
             response: {
                 204: {
