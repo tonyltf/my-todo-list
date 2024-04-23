@@ -21,6 +21,8 @@ services:
             - '5173:5173'
         environment:
             - NODE_ENV=development
+            - VITE_API_URL=http://localhost:9080
+            - VITE_USER_ID_COOKIES_NAME=todolist_user_id
 
     db:
         image: postgres:latest

@@ -2,7 +2,6 @@ import Cookies from 'js-cookie';
 import { useQuery } from '@tanstack/react-query';
 
 import { createUser } from '../../api/api';
-import { Todos } from '../Todo/Todos';
 
 const cookieName = import.meta.env.VITE_USER_ID_COOKIES_NAME;
 
@@ -18,5 +17,5 @@ export const NewUser: React.FC = () => {
         Cookies.set(cookieName, data.id);
     }
 
-    return <Todos />;
+    return <></>;
 };
