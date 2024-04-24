@@ -6,7 +6,7 @@ import fastifySwaggerUi from '@fastify/swagger-ui';
 
 import { env } from './config';
 import userRoute from './routes/user.route';
-import todoRoute from "./routes/newFile";
+import todoRoute from './routes/todo.route';
 
 const server = fastify();
 
