@@ -1,9 +1,9 @@
+import { ConfigProvider, theme } from 'antd';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import './App.css';
 import { Todos } from './components/Todo/Todos';
 import { TodoProvider } from './context/TodoContext';
-import { ConfigProvider, theme } from 'antd';
 
 const queryClient = new QueryClient();
 

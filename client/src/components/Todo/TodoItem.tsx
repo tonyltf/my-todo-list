@@ -1,14 +1,16 @@
-import { Button, Checkbox, Form, Input, List } from 'antd';
+import { Button, Checkbox, Flex, List, notification } from 'antd';
 import Cookies from 'js-cookie';
 import { useCallback, useContext, useState } from 'react';
+import { useForm } from 'react-hook-form';
+
+import { DeleteOutlined } from '@ant-design/icons';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 
-import { Todo } from '../../types/todo';
+import { Todo, todoSchema, TodoSchema } from '../../types/todo';
 import { TodoContext } from '../../context/TodoContext';
-import { TODO_ACTION } from '../../reducer/TodoReducer';
+import { TodoAction } from '../../reducer/TodoReducer';
 import { deleteTodo, editTodo } from '../../api/api';
-import { DeleteOutlined } from '@ant-design/icons';
-
 interface TodoItemProps {
     item: Todo;
 }
@@ -24,6 +26,9 @@ export const TodoItem: React.FC<TodoItemProps> = ({
     if (!context) {
         throw new Error('TodoList must be used within a TodoProvider');
     }
+
+    const [notificationInstance, contextHolder] =
+        notification.useNotification();
     const userId = Cookies.get(cookieName);
     const { mutateAsync: editTodoAction } = useMutation({
         mutationFn: (params: { name?: string; isCompleted?: boolean }) =>
@@ -32,33 +37,47 @@ export const TodoItem: React.FC<TodoItemProps> = ({
     const { mutateAsync: deleteTodoAction } = useMutation({
         mutationFn: () => deleteTodo(userId!, id),
     });
-    const [updatedName, setUpdatedName] = useState(name);
+    const { register, handleSubmit } = useForm({
+        defaultValues: {
+            name,
+        },
+        resolver: zodResolver(todoSchema),
+    });
 
     const { dispatch } = context;
 
-    const handleEdit = useCallback(async () => {
-        await editTodoAction(
-            { name: updatedName },
-            {
-                onSuccess: () => {
-                    dispatch({
-                        type: TODO_ACTION.EDIT_TODO,
-                        id,
-                        name: updatedName,
-                    }),
-                        [id];
-                    setIsEditing(false);
+    const handleEdit = useCallback(
+        async ({ name }: TodoSchema) => {
+            await editTodoAction(
+                { name },
+                {
+                    onSuccess: () => {
+                        dispatch({
+                            type: TodoAction.EDIT_TODO,
+                            id,
+                            name,
+                        }),
+                            [id];
+                        setIsEditing(false);
+                    },
                 },
-            },
-        );
-    }, [id, updatedName]);
+            );
+        },
+        [id],
+    );
 
     const handleToggle = useCallback(async () => {
         await editTodoAction(
             { isCompleted: !isCompleted },
             {
                 onSuccess: () => {
-                    dispatch({ type: TODO_ACTION.TOGGLE_TODO, id });
+                    dispatch({ type: TodoAction.TOGGLE_TODO, id });
+                },
+                onError: (error) => {
+                    notificationInstance.error({
+                        message: 'Failed to toggle todo',
+                        description: error.message,
+                    });
                 },
             },
         );
@@ -67,48 +86,53 @@ export const TodoItem: React.FC<TodoItemProps> = ({
     const handleDelete = useCallback(async () => {
         await deleteTodoAction(undefined, {
             onSuccess: () => {
-                dispatch({ type: TODO_ACTION.REMOVE_TODO, id });
+                dispatch({ type: TodoAction.REMOVE_TODO, id });
+            },
+            onError: (error) => {
+                notificationInstance.error({
+                    message: 'Failed to delete todo',
+                    description: error.message,
+                });
             },
         });
     }, [id]);
 
     return (
-        <List.Item
-            actions={[
-                <Button onClick={() => setIsEditing(true)}>Edit</Button>,
-                <DeleteOutlined
-                    onClick={handleDelete}
-                    style={{ color: 'red' }}
-                />,
-            ]}
-        >
-            {isEditing ? (
-                <Form onFinish={handleEdit}>
-                    <Form.Item>
-                        <Input
-                            type="text"
-                            value={updatedName}
-                            onChange={(e) => setUpdatedName(e.target.value)}
-                            placeholder="Update todo name"
-                        />
-                    </Form.Item>
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit">
-                            Update Todo
-                        </Button>
-                    </Form.Item>
-                </Form>
-            ) : (
-                <List.Item.Meta
-                    avatar={
-                        <Checkbox
-                            checked={isCompleted}
-                            onChange={handleToggle}
-                        />
-                    }
-                    title={name}
-                />
-            )}
-        </List.Item>
+        <>
+            {contextHolder}
+            <List.Item
+                actions={[
+                    <Button onClick={() => setIsEditing(true)}>Edit</Button>,
+                    <DeleteOutlined
+                        onClick={handleDelete}
+                        style={{ color: 'red' }}
+                    />,
+                ]}
+            >
+                {isEditing ? (
+                    <form onSubmit={handleSubmit(handleEdit)}>
+                        <Flex justify="center" gap="middle">
+                            <input
+                                {...register('name')}
+                                placeholder="Update todo name"
+                            />
+                            <Button type="primary" htmlType="submit">
+                                Update Todo
+                            </Button>
+                        </Flex>
+                    </form>
+                ) : (
+                    <List.Item.Meta
+                        avatar={
+                            <Checkbox
+                                checked={isCompleted}
+                                onChange={handleToggle}
+                            />
+                        }
+                        title={name}
+                    />
+                )}
+            </List.Item>
+        </>
     );
 };

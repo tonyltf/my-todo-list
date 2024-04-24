@@ -29,19 +29,35 @@ docker compose build
 
 ## Usage
 
-To start everything run locally:
+To start everything, run the commadn locally:
 
 ```sh
-docker-compose up
+docker-compose up -d
+```
+
+Optional starting method:
+
+```sh
+docker-compose up [server | client] -d
 ```
 
 ## Features
 
 ## API Documentation
 
+Start the server app and visit http://localhost:9080/documentation/
+
 ## Configuration
 
+There is a `.env.sample` for sample configuration, simply copy to or rename it as `.env` if you want to run locally
+
 ## Testing
+
+Go to each server/ and client/ and run:
+
+```sh
+pnpm run test
+```
 
 ## Deployment
 
@@ -84,3 +100,6 @@ The database is initialized on creation as the requirement is not to use any ORM
 Assuming for future maintenance like migration, ORM (i.e Drizzle, Prisma, etc.) will be needed
 
 ## Screenshots/Demo
+
+![initial state](./docs/screenshots/client-with-no-data.png)
+![after adding and completed some todo  ](./docs/screenshots/client-with-some-data.png)
