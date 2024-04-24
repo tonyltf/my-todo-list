@@ -3,7 +3,7 @@ import { FastifyInstance, FastifyRequest } from "fastify";
 import { TodoController } from "../controllers/todo.controller";
 import { TodoService } from "../services/todo.service";
 import { CreateTodoBody, UpdateTodoBody } from "../types";
-import { StatusCodes } from "src/types/status-code";
+import { StatusCodes } from "../types/status-code";
 
 export default async function (fastify: FastifyInstance) {
 

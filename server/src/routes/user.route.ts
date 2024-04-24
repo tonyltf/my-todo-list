@@ -2,7 +2,7 @@ import { FastifyInstance } from "fastify";
 
 import { UserController } from '../controllers/user.controller';
 import { UserService } from "../services/user.service";
-import { StatusCodes } from "src/types/status-code";
+import { StatusCodes } from "../types/status-code";
 
 export default async function (fastify: FastifyInstance) {
 
