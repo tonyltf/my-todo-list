@@ -99,7 +99,7 @@ describe('TodoService', () => {
                 `
                 INSERT INTO todo (name, user_id, is_completed, created_at, updated_at)
                 VALUES ($1, $2, false, current_timestamp, current_timestamp)
-                RETURNING id
+                RETURNING *;
                 `,
                 [todoData.name, userId]
             );
@@ -131,11 +131,11 @@ describe('TodoService', () => {
             expect(mockQuery).toHaveBeenCalledWith(
                 `
                 UPDATE todo
-                SET name = $1, isCompleted = $2, updated_at = current_timestamp
-                WHERE id = $3 AND user_id = $4
-                RETURNING id
+                SET name = $1, is_completed = $2, completed_at = $3, updated_at = current_timestamp
+                WHERE id = $4 AND user_id = $5
+                RETURNING id;
             `,
-                [todoData.name, todoData.isCompleted, todoId, userId]
+                [todoData.name, todoData.isCompleted, new Date(), todoId, userId]
             );
 
             expect(result).toEqual('789');
@@ -162,7 +162,7 @@ describe('TodoService', () => {
                 `
                 UPDATE todo
                 SET is_enabled = false, updated_at = current_timestamp
-                WHERE id = $3 AND user_id = $4
+                WHERE id = $1 AND user_id = $2
                 RETURNING id
             `,
                 [todoId, userId]

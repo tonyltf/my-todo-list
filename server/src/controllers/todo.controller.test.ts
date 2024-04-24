@@ -28,6 +28,37 @@ describe('TodoController', () => {
         todoController = new TodoController(mockTodoService);
     });
 
+    describe('transformTodo', () => {
+        it('should transform a TodoDbModel into a Todo', () => {
+            // Mock the TodoDbModel
+            const todoDbModel = {
+                id: '76fc0630-1870-416d-b930-a81e9cd7c9f8',
+                name: 'hello 1',
+                is_completed: false,
+                created_at: new Date('2024-04-20T14:41:30.566Z'),
+                updated_at: new Date('2024-04-20T14:41:30.566Z'),
+                user_id: '81ea0c12-8f25-450e-bdc2-2c67f7ba1001',
+                is_enabled: true,
+                completed_at: null,
+            };
+
+            // Call the transformTodo method
+            const transformedTodo = TodoController.transformTodo(todoDbModel);
+
+            // Verify that the transformedTodo has the correct properties
+            expect(transformedTodo).toEqual({
+                id: '76fc0630-1870-416d-b930-a81e9cd7c9f8',
+                name: 'hello 1',
+                userId: '81ea0c12-8f25-450e-bdc2-2c67f7ba1001',
+                isEnabled: true,
+                isCompleted: false,
+                completedAt: null,
+                createdAt: new Date('2024-04-20T14:41:30.566Z'),
+                updatedAt: new Date('2024-04-20T14:41:30.566Z'),
+            });
+        });
+    });
+
     describe('getTodo', () => {
         it('should return all todo items for a user', async () => {
             // Mock the request and reply objects
@@ -47,14 +78,14 @@ describe('TodoController', () => {
             const todoService = {
                 getTodoForUser: jest.fn().mockResolvedValue([
                     {
-                        "id": "76fc0630-1870-416d-b930-a81e9cd7c9f8",
-                        "name": "hello 1",
-                        "is_completed": false,
-                        "created_at": "2024-04-20T14:41:30.566Z",
-                        "updated_at": "2024-04-20T14:41:30.566Z",
-                        "user_id": "81ea0c12-8f25-450e-bdc2-2c67f7ba1001",
-                        "is_enabled": true,
-                        "completed_at": ""
+                        'id': '76fc0630-1870-416d-b930-a81e9cd7c9f8',
+                        'name': 'hello 1',
+                        'is_completed': false,
+                        'created_at': '2024-04-20T14:41:30.566Z',
+                        'updated_at': '2024-04-20T14:41:30.566Z',
+                        'user_id': '81ea0c12-8f25-450e-bdc2-2c67f7ba1001',
+                        'is_enabled': true,
+                        'completed_at': ''
                     }
                 ]),
             } as unknown as TodoService;
@@ -70,14 +101,14 @@ describe('TodoController', () => {
 
             // Verify that the reply.send method was called with the correct todo items
             expect(reply.status(200).send).toHaveBeenCalledWith([{
-                "id": "76fc0630-1870-416d-b930-a81e9cd7c9f8",
-                "name": "hello 1",
-                "isCompleted": false,
-                "createdAt": "2024-04-20T14:41:30.566Z",
-                "updatedAt": "2024-04-20T14:41:30.566Z",
-                "userId": "81ea0c12-8f25-450e-bdc2-2c67f7ba1001",
-                "isEnabled": true,
-                "completedAt": ""
+                'id': '76fc0630-1870-416d-b930-a81e9cd7c9f8',
+                'name': 'hello 1',
+                'isCompleted': false,
+                'createdAt': '2024-04-20T14:41:30.566Z',
+                'updatedAt': '2024-04-20T14:41:30.566Z',
+                'userId': '81ea0c12-8f25-450e-bdc2-2c67f7ba1001',
+                'isEnabled': true,
+                'completedAt': ''
             }]);
         });
     });
@@ -87,7 +118,7 @@ describe('TodoController', () => {
             // Mock the request and reply objects
             const request = {
                 params: {
-                    userId: '123',
+                    userId: 'useId',
                 },
                 body: {
                     // Provide the necessary properties for the todoData object
@@ -103,7 +134,16 @@ describe('TodoController', () => {
 
             // Mock the todoService.createTodoForUser method
             const todoService = {
-                createTodoForUser: jest.fn().mockResolvedValue('newTodoId'),
+                createTodoForUser: jest.fn().mockResolvedValue({
+                    id: 'newTodoId',
+                    name: 'New Todo',
+                    user_id: 'useId',
+                    is_enabled: true,
+                    is_completed: false,
+                    completed_at: null,
+                    created_at: new Date('2024-04-20T14:41:30.566Z'),
+                    updated_at: new Date('2024-04-20T14:41:30.566Z'),
+                }),
             } as unknown as TodoService;
 
             // Set the todoService mock in the todoController instance
@@ -114,12 +154,21 @@ describe('TodoController', () => {
 
             // Verify that the todoService.createTodoForUser method was called with the correct userId and todoData
             expect(todoService.createTodoForUser).toHaveBeenCalledWith({
-                userId: '123',
+                userId: 'useId',
                 todoData: request.body,
             });
 
             // Verify that the reply.status(201).send method was called with the correct response
-            expect(reply.status(201).send).toHaveBeenCalledWith({ id: 'newTodoId' });
+            expect(reply.status(201).send).toHaveBeenCalledWith({
+                'completedAt': null,
+                'createdAt': new Date('2024-04-20T14:41:30.566Z'),
+                'id': 'newTodoId',
+                'isCompleted': false,
+                'isEnabled': true,
+                'name': 'New Todo',
+                'updatedAt': new Date('2024-04-20T14:41:30.566Z'),
+                'userId': 'useId',
+            });
         });
     });
 
