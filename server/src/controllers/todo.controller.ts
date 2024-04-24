@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 
-import { TodoService } from "../services/todo.service";
 import { CreateTodoBody, Todo, TodoDbModel, UpdateTodoBody } from "../types";
+import { TodoService } from "../services/todo.service";
 
 export class TodoController {
     todoService: TodoService;

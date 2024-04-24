@@ -1,7 +1,8 @@
-import { FastifyRequest, FastifyReply, FastifyInstance } from 'fastify';
-import { TodoController } from './todo.controller';
-import { TodoService } from '../services/todo.service';
+import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { CreateTodoBody, UpdateTodoBody } from 'src/types';
+
+import { TodoService } from '../services/todo.service';
+import { TodoController } from './todo.controller';
 
 jest.mock('../services/todo.service'); // Automatically mocks the TodoService
 

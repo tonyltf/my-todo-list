@@ -14,6 +14,49 @@ export default tseslint.config(
         },
         rules: {
             semi: 'error',
+            '@typescript-eslint/naming-convention': [
+                'error',
+                {
+                    selector: 'default',
+                    format: ['camelCase'],
+                },
+                {
+                    selector: 'import',
+                    format: null,
+                },
+                {
+                    selector: 'variable',
+                    format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
+                },
+                {
+                    selector: ['function', 'objectLiteralMethod'],
+                    format: ['camelCase', 'PascalCase'],
+                },
+                {
+                    selector: 'typeLike',
+                    format: ['PascalCase'],
+                },
+                {
+                    selector: 'enumMember',
+                    format: ['UPPER_CASE'],
+                },
+                {
+                    selector: 'parameter',
+                    format: ['camelCase', 'PascalCase'],
+                    leadingUnderscore: 'allow',
+                },
+                {
+                    selector: 'property',
+                    format: [
+                        'camelCase',
+                        'snake_case',
+                        'UPPER_CASE',
+                        'PascalCase',
+                    ],
+                    leadingUnderscore: 'allowSingleOrDouble',
+                    trailingUnderscore: 'allowSingleOrDouble',
+                },
+            ],
         },
     },
 );

@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify";
 
 import { UserController } from '../controllers/user.controller';
 import { UserService } from "../services/user.service";
+import { StatusCodes } from "src/types/status-code";
 
 export default async function (fastify: FastifyInstance) {
 
@@ -16,7 +17,7 @@ export default async function (fastify: FastifyInstance) {
                 required: []
             },
             response: {
-                201: {
+                [StatusCodes.CREATED]: {
                     description: 'Successful response',
                     type: 'object',
                     properties: {

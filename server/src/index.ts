@@ -6,7 +6,7 @@ import fastifySwaggerUi from '@fastify/swagger-ui';
 
 import { env } from './config';
 import userRoute from './routes/user.route';
-import todoRoute from './routes/todo.route';
+import todoRoute from "./routes/newFile";
 
 const server = fastify();
 
@@ -61,7 +61,6 @@ const main = async () => {
       reply.send(error);
     }
   });
-
 
   server.register(fastifyPostgres, {
     connectionString: env.DATABASE_URL,

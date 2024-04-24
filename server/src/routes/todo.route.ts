@@ -1,8 +1,9 @@
-import { FastifyRequest, FastifyInstance } from "fastify";
+import { FastifyInstance, FastifyRequest } from "fastify";
 
 import { TodoController } from "../controllers/todo.controller";
 import { TodoService } from "../services/todo.service";
 import { CreateTodoBody, UpdateTodoBody } from "../types";
+import { StatusCodes } from "src/types/status-code";
 
 export default async function (fastify: FastifyInstance) {
 
@@ -22,7 +23,7 @@ export default async function (fastify: FastifyInstance) {
                 required: ['userId']
             },
             response: {
-                200: {
+                [StatusCodes.OK]: {
                     type: 'array',
                     items: {
                         type: 'object',
@@ -39,7 +40,17 @@ export default async function (fastify: FastifyInstance) {
                         required: ['id', 'name', 'userId', 'isEnabled', 'isCompleted', 'completedAt', 'createdAt', 'updatedAt']
                     }
                 },
-                404: {
+                [StatusCodes.BAD_REQUEST]: {
+                    description: 'Bad request',
+                    type: 'object',
+                    properties: {
+                        error: { type: 'string' },
+                        details: {
+                            type: 'array'
+                        },
+                    },
+                },
+                [StatusCodes.NOT_FOUND]: {
                     description: 'Not found',
                     type: 'object',
                     properties: {
@@ -75,7 +86,7 @@ export default async function (fastify: FastifyInstance) {
                 required: ['name']
             },
             response: {
-                201: {
+                [StatusCodes.CREATED]: {
                     description: 'Successful response',
                     type: 'object',
                     properties: {
@@ -90,7 +101,17 @@ export default async function (fastify: FastifyInstance) {
                     },
                     required: ['id', 'name', 'userId', 'isEnabled', 'isCompleted', 'completedAt', 'createdAt', 'updatedAt']
                 },
-                500: {
+                [StatusCodes.BAD_REQUEST]: {
+                    description: 'Bad request',
+                    type: 'object',
+                    properties: {
+                        error: { type: 'string' },
+                        details: {
+                            type: 'array'
+                        },
+                    },
+                },
+                [StatusCodes.INTERNAL_SERVER_ERROR]: {
                     description: 'Failed to create todo',
                     type: 'object',
                     properties: {
@@ -127,14 +148,24 @@ export default async function (fastify: FastifyInstance) {
                 }
             },
             response: {
-                204: {
+                [StatusCodes.NO_CONTENT]: {
                     description: 'Successful response',
                     type: 'object',
                     properties: {
                         id: { type: 'string' }
                     }
                 },
-                404: {
+                [StatusCodes.BAD_REQUEST]: {
+                    description: 'Bad request',
+                    type: 'object',
+                    properties: {
+                        error: { type: 'string' },
+                        details: {
+                            type: 'array'
+                        },
+                    },
+                },
+                [StatusCodes.NOT_FOUND]: {
                     description: 'Not found',
                     type: 'object',
                     properties: {
@@ -164,12 +195,22 @@ export default async function (fastify: FastifyInstance) {
                 required: ['userId', 'todoId']
             },
             response: {
-                204: {
+                [StatusCodes.NO_CONTENT]: {
                     description: 'Successful response',
                     type: 'object',
                     properties: {}
                 },
-                404: {
+                [StatusCodes.BAD_REQUEST]: {
+                    description: 'Bad request',
+                    type: 'object',
+                    properties: {
+                        error: { type: 'string' },
+                        details: {
+                            type: 'array'
+                        },
+                    },
+                },
+                [StatusCodes.NOT_FOUND]: {
                     description: 'Not found',
                     type: 'object',
                     properties: {
