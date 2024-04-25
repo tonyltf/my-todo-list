@@ -1,14 +1,14 @@
 import { List } from 'antd';
 import { useContext, useEffect } from 'react';
 
+import { getTodos } from '@/api';
+import { TodoContext } from '@/context/TodoContext';
+import { ErrorPage } from '@/pages/ErrorPage';
+import { TodoAction } from '@/reducer/TodoReducer';
 import { useQuery } from '@tanstack/react-query';
 
 import { TodoItem } from './TodoItem';
 import { AddTodoItem } from './AddTodoItem';
-import { getTodos } from '../../api/api';
-import { TodoContext } from '../../context/TodoContext';
-import { ErrorPage } from '../../pages/ErrorPage';
-import { TodoAction } from '../../reducer/TodoReducer';
 
 export const TodoList: React.FC<{ userId: string }> = ({ userId }: { userId: string }) => {
 

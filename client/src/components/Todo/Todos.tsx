@@ -1,14 +1,14 @@
 import Cookies from 'js-cookie';
 
+import { config } from '@/config';
 import { useQuery } from '@tanstack/react-query';
 
 import { TodoList } from './TodoList';
-import { createUser } from '../../api/api';
-import { ErrorPage } from '../../pages/ErrorPage';
-
-const cookieName = import.meta.env.VITE_USER_ID_COOKIES_NAME;
+import { createUser } from '@/api';
+import { ErrorPage } from '@/pages/ErrorPage';
 
 export const Todos: React.FC = () => {
+    const cookieName = config.userIdCookiesName;
     const userId = Cookies.get(cookieName);
 
     if (userId) {

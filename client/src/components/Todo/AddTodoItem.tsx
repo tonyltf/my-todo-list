@@ -3,15 +3,14 @@ import Cookies from 'js-cookie';
 import { useCallback, useContext } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { config } from '@/config';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 
-import { createTodo } from '../../api/api';
-import { TodoContext } from '../../context/TodoContext';
-import { TodoAction } from '../../reducer/TodoReducer';
-import { TodoSchema, todoSchema } from '../../types/todo';
-
-const cookieName = import.meta.env.VITE_USER_ID_COOKIES_NAME;
+import { createTodo } from '@/api';
+import { TodoContext } from '@/context/TodoContext';
+import { TodoAction } from '@/reducer/TodoReducer';
+import { TodoSchema, todoSchema } from '@/types/todo';
 
 export const AddTodoItem: React.FC = () => {
     const context = useContext(TodoContext);
@@ -22,7 +21,7 @@ export const AddTodoItem: React.FC = () => {
 
     const [notificationInstance, contextHolder] =
         notification.useNotification();
-    const userId = Cookies.get(cookieName);
+    const userId = Cookies.get(config.userIdCookiesName);
     const { mutateAsync } = useMutation({
         mutationFn: (name: string) => createTodo(userId!, { name }),
     });

@@ -1,8 +1,9 @@
 import createClient from 'openapi-fetch';
-import type { paths } from '../types/schema';
-import { NewTodo } from '../types/todo';
+import { config } from '@/config';
+import type { paths } from '@/types/schema';
+import { NewTodo } from '@/types/todo';
 
-const client = createClient<paths>({ baseUrl: import.meta.env.VITE_API_URL });
+const client = createClient<paths>({ baseUrl: config.apiUrl });
 
 export const createUser = async () => {
     const { data, error } = await client.POST('/v1/users', {

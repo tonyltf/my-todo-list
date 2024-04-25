@@ -1,14 +1,19 @@
 import { ConfigProvider, theme } from 'antd';
 import React, { ReactElement } from 'react';
 
+import { TodoProvider } from '@/context/TodoContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, RenderOptions } from '@testing-library/react';
 
-import { TodoProvider } from '../src/context/TodoContext';
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            retry: false,
+        },
+    },
+});
 
-const queryClient = new QueryClient();
-
-const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
+const allTheProviders = ({ children }: { children: React.ReactNode }) => {
     return (
         <ConfigProvider
             theme={{
@@ -25,7 +30,7 @@ const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
 const customRender = (
     ui: ReactElement,
     options?: Omit<RenderOptions, 'wrapper'>,
-) => render(ui, { wrapper: AllTheProviders, ...options });
+) => render(ui, { wrapper: allTheProviders, ...options });
 
 export * from '@testing-library/react';
-export { customRender as render };
+export { customRender as render, allTheProviders as wrapper };

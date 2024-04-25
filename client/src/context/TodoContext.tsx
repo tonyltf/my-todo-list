@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useReducer } from 'react';
 
-import { Action, reducer, State } from '../reducer/TodoReducer';
+import { Action, reducer, State } from '@/reducer/TodoReducer';
 
 export const TodoContext = createContext<{
     state: State;

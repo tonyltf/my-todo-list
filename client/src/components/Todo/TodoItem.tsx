@@ -3,19 +3,18 @@ import Cookies from 'js-cookie';
 import { useCallback, useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { deleteTodo, editTodo } from '@/api';
+import { config } from '@/config';
+import { TodoContext } from '@/context/TodoContext';
+import { TodoAction } from '@/reducer/TodoReducer';
+import { Todo, todoSchema, TodoSchema } from '@/types/todo';
 import { DeleteOutlined } from '@ant-design/icons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 
-import { Todo, todoSchema, TodoSchema } from '../../types/todo';
-import { TodoContext } from '../../context/TodoContext';
-import { TodoAction } from '../../reducer/TodoReducer';
-import { deleteTodo, editTodo } from '../../api/api';
 interface TodoItemProps {
     item: Todo;
 }
-
-const cookieName = import.meta.env.VITE_USER_ID_COOKIES_NAME;
 
 export const TodoItem: React.FC<TodoItemProps> = ({
     item: { id, name, isCompleted },
@@ -29,7 +28,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({
 
     const [notificationInstance, contextHolder] =
         notification.useNotification();
-    const userId = Cookies.get(cookieName);
+    const userId = Cookies.get(config.userIdCookiesName);
     const { mutateAsync: editTodoAction } = useMutation({
         mutationFn: (params: { name?: string; isCompleted?: boolean }) =>
             editTodo(userId!, id, params),
