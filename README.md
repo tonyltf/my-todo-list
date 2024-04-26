@@ -96,6 +96,8 @@ The server can be built for production and then host it on any cloud service, su
 
 ## Credits and Acknowledgments
 
+The client testing can be enhanced by using Cypress or other testing framework, currently on reducer is tested because it may requires too much extra time to test / mock with the current client/api setup
+
 The database is initialized on creation as the requirement is not to use any ORM.
 Assuming for future maintenance like migration, ORM (i.e Drizzle, Prisma, etc.) will be needed
 
