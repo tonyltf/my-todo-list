@@ -24,7 +24,7 @@ Make sure you have installed the follow prerequisites
 ### Setup
 
 ```sh
-docker compose build
+docker compose build --parallel
 ```
 
 ## Usage
