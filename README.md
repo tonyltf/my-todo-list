@@ -101,6 +101,10 @@ The client testing can be enhanced by using Cypress or other testing framework, 
 The database is initialized on creation as the requirement is not to use any ORM.
 Assuming for future maintenance like migration, ORM (i.e Drizzle, Prisma, etc.) will be needed
 
+## Troubleshoot
+
+If the database cannot be init, it can because `script/db/init.sh` is missing require permission.The solution is to remove the entire docker container and volume, grant permission to init script `chmod +x script/db/init.sh` and then re-build and start the app
+
 ## Screenshots/Demo
 
 ![initial state](./docs/screenshots/client-with-no-data.png)
