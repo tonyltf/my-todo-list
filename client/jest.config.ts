@@ -29,7 +29,8 @@ const config: Config = {
                                 metaObjectReplacement: {
                                     env: {
                                         VITE_API_PATH: 'http://localhost:9080',
-                                        VITE_USER_ID_COOKIES_NAME: 'todo_list_user_id',
+                                        VITE_USER_ID_COOKIES_NAME:
+                                            'todo_list_user_id',
                                     },
                                 },
                             },

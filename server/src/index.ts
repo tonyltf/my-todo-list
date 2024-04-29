@@ -11,91 +11,104 @@ import todoRoute from './routes/todo.route';
 const server = fastify();
 
 const main = async () => {
+    await server.register(fastifySwagger, {
+        openapi: {
+            openapi: '3.0.0',
+            info: {
+                title: 'Todo API',
+                description: 'A simple API to todo list',
+                version: '0.1.0',
+            },
+            servers: [
+                {
+                    url: `http://localhost:${env.PORT}`,
+                    description: 'Development server',
+                },
+            ],
+            tags: [
+                { name: 'user', description: 'User related end-points' },
+                { name: 'todo', description: 'TODO list related end-points' },
+            ],
+            components: {},
+            externalDocs: {
+                url: 'https://swagger.io',
+                description: 'Find more info here',
+            },
+        },
+    });
 
-  await server.register(fastifySwagger, {
-    openapi: {
-      openapi: '3.0.0',
-      info: {
-        title: 'Todo API',
-        description: 'A simple API to todo list',
-        version: '0.1.0'
-      },
-      servers: [
-        {
-          url: `http://localhost:${env.PORT}`,
-          description: 'Development server'
+    await server.register(fastifySwaggerUi, {
+        routePrefix: '/documentation',
+        initOAuth: {},
+        uiConfig: {
+            docExpansion: 'full',
+            deepLinking: false,
+        },
+        uiHooks: {
+            onRequest: function (request, reply, next) {
+                next();
+            },
+            preHandler: function (request, reply, next) {
+                next();
+            },
+        },
+        staticCSP: true,
+        transformStaticCSP: (header) => header,
+    });
+
+    server.setErrorHandler(function (error, request, reply) {
+        if (error.validation) {
+            reply
+                .status(400)
+                .send({
+                    error: 'Validation failed',
+                    details: error.validation,
+                });
+        } else {
+            reply.send(error);
         }
-      ],
-      tags: [
-        { name: 'user', description: 'User related end-points' },
-        { name: 'todo', description: 'TODO list related end-points' },
-      ],
-      components: {
-      },
-      externalDocs: {
-        url: 'https://swagger.io',
-        description: 'Find more info here'
-      }
-    }
-  });
+    });
 
-  await server.register(fastifySwaggerUi, {
-    routePrefix: '/documentation',
-    initOAuth: {},
-    uiConfig: {
-      docExpansion: 'full',
-      deepLinking: false
-    },
-    uiHooks: {
-      onRequest: function (request, reply, next) { next(); },
-      preHandler: function (request, reply, next) { next(); }
-    },
-    staticCSP: true,
-    transformStaticCSP: (header) => header
-  });
+    server.register(fastifyPostgres, {
+        connectionString: env.DATABASE_URL,
+    });
 
-  server.setErrorHandler(function (error, request, reply) {
-    if (error.validation) {
-      reply.status(400).send({ error: 'Validation failed', details: error.validation });
-    } else {
-      reply.send(error);
-    }
-  });
+    server.register(fastifyCors, () => {
+        return (
+            req: FastifyRequest,
+            callback: (
+                error: Error | null,
+                corsOptions?: FastifyCorsOptions,
+            ) => void,
+        ) => {
+            const corsOptions: FastifyCorsOptions = {
+                origin: env.CORS_ORIGINS,
+            };
 
-  server.register(fastifyPostgres, {
-    connectionString: env.DATABASE_URL,
-  });
+            // do not include CORS headers for requests from localhost
+            if (req.headers.origin && /^localhost$/m.test(req.headers.origin)) {
+                corsOptions.origin = false;
+            }
 
-  server.register(fastifyCors, () => {
-    return (req: FastifyRequest, callback: (error: Error | null, corsOptions?: FastifyCorsOptions) => void) => {
-      const corsOptions: FastifyCorsOptions = {
-        origin: env.CORS_ORIGINS,
-      };
+            // callback expects two parameters: error and options
+            callback(null, corsOptions);
+        };
+    });
 
-      // do not include CORS headers for requests from localhost
-      if (req.headers.origin && /^localhost$/m.test(req.headers.origin)) {
-        corsOptions.origin = false;
-      }
+    server.get('/health', async () => {
+        return 'OK';
+    });
 
-      // callback expects two parameters: error and options
-      callback(null, corsOptions);
-    };
-  });
+    server.register(userRoute, { prefix: '/v1' });
+    server.register(todoRoute, { prefix: '/v1' });
 
-  server.get('/health', async () => {
-    return 'OK';
-  });
-
-  server.register(userRoute, { prefix: '/v1' });
-  server.register(todoRoute, { prefix: '/v1' });
-
-  server.listen({ host: env.HOSTNAME, port: env.PORT }, (err, address) => {
-    if (err) {
-      console.error(err);
-      process.exit(1);
-    }
-    console.log(`Server listening at ${address}`);
-  });
+    server.listen({ host: env.HOSTNAME, port: env.PORT }, (err, address) => {
+        if (err) {
+            console.error(err);
+            process.exit(1);
+        }
+        console.log(`Server listening at ${address}`);
+    });
 };
 
 main();

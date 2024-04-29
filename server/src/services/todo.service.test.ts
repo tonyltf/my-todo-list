@@ -38,7 +38,7 @@ describe('TodoService', () => {
             // Verify that the client.query method was called with the correct SQL query and parameters
             expect((await mockFastify.pg.connect()).query).toHaveBeenCalledWith(
                 'SELECT * FROM todo WHERE user_id = $1 AND is_enabled = true ORDER BY created_at ASC',
-                [userId]
+                [userId],
             );
 
             // Verify that the result is the expected todo items
@@ -64,7 +64,7 @@ describe('TodoService', () => {
             // Verify that the client.query method was called with the correct SQL query and parameters
             expect((await mockFastify.pg.connect()).query).toHaveBeenCalledWith(
                 'SELECT * FROM todo WHERE id = $1 AND user_id = $2',
-                [todoId, userId]
+                [todoId, userId],
             );
 
             // Verify that the result is the expected todo item
@@ -79,17 +79,26 @@ describe('TodoService', () => {
             const todoData = { name: 'New Todo' };
 
             // Mock the client.query method
-            const mockQuery = jest.fn().mockResolvedValue({ rows: [{ id: '789' }] });
+            const mockQuery = jest
+                .fn()
+                .mockResolvedValue({ rows: [{ id: '789' }] });
             const mockRelease = jest.fn();
-            const mockConnect = jest.fn().mockResolvedValue({ query: mockQuery, release: mockRelease });
+            const mockConnect = jest
+                .fn()
+                .mockResolvedValue({ query: mockQuery, release: mockRelease });
             // const mockClient = { query: mockQuery, release: mockRelease };
             const mockFastify = { pg: { connect: mockConnect } };
 
             // Create a new instance of TodoService with the mockFastify
-            const todoService = new TodoService(mockFastify as unknown as FastifyInstance);
+            const todoService = new TodoService(
+                mockFastify as unknown as FastifyInstance,
+            );
 
             // Call the createTodoForUser method
-            const result = await todoService.createTodoForUser({ userId, todoData });
+            const result = await todoService.createTodoForUser({
+                userId,
+                todoData,
+            });
 
             // Verify that the fastify.pg.connect method was called
             expect(mockConnect).toHaveBeenCalled();
@@ -101,7 +110,7 @@ describe('TodoService', () => {
                 VALUES ($1, $2, false, current_timestamp, current_timestamp)
                 RETURNING *;
                 `,
-                [todoData.name, userId]
+                [todoData.name, userId],
             );
 
             // Verify that the result is the expected todo item id
@@ -118,14 +127,24 @@ describe('TodoService', () => {
             const todoId = '456';
             const todoData = { name: 'Updated Todo', isCompleted: true };
 
-            const mockQuery = jest.fn().mockResolvedValue({ rows: [{ id: '789' }] });
+            const mockQuery = jest
+                .fn()
+                .mockResolvedValue({ rows: [{ id: '789' }] });
             const mockRelease = jest.fn();
-            const mockConnect = jest.fn().mockResolvedValue({ query: mockQuery, release: mockRelease });
+            const mockConnect = jest
+                .fn()
+                .mockResolvedValue({ query: mockQuery, release: mockRelease });
             const mockFastify = { pg: { connect: mockConnect } };
 
-            const todoService = new TodoService(mockFastify as unknown as FastifyInstance);
+            const todoService = new TodoService(
+                mockFastify as unknown as FastifyInstance,
+            );
 
-            const result = await todoService.updateTodo({ userId, todoId, todoData });
+            const result = await todoService.updateTodo({
+                userId,
+                todoId,
+                todoData,
+            });
 
             expect(mockConnect).toHaveBeenCalled();
             expect(mockQuery).toHaveBeenCalledWith(
@@ -135,7 +154,13 @@ describe('TodoService', () => {
                 WHERE id = $4 AND user_id = $5
                 RETURNING id;
             `,
-                [todoData.name, todoData.isCompleted, new Date(), todoId, userId]
+                [
+                    todoData.name,
+                    todoData.isCompleted,
+                    new Date(),
+                    todoId,
+                    userId,
+                ],
             );
 
             expect(result).toEqual('789');
@@ -148,12 +173,18 @@ describe('TodoService', () => {
             const userId = '123';
             const todoId = '456';
 
-            const mockQuery = jest.fn().mockResolvedValue({ rows: [{ id: '789' }] });
+            const mockQuery = jest
+                .fn()
+                .mockResolvedValue({ rows: [{ id: '789' }] });
             const mockRelease = jest.fn();
-            const mockConnect = jest.fn().mockResolvedValue({ query: mockQuery, release: mockRelease });
+            const mockConnect = jest
+                .fn()
+                .mockResolvedValue({ query: mockQuery, release: mockRelease });
             const mockFastify = { pg: { connect: mockConnect } };
 
-            const todoService = new TodoService(mockFastify as unknown as FastifyInstance);
+            const todoService = new TodoService(
+                mockFastify as unknown as FastifyInstance,
+            );
 
             const result = await todoService.deleteTodo({ userId, todoId });
 
@@ -165,7 +196,7 @@ describe('TodoService', () => {
                 WHERE id = $1 AND user_id = $2
                 RETURNING id
             `,
-                [todoId, userId]
+                [todoId, userId],
             );
 
             expect(result).toEqual('789');

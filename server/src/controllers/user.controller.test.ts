@@ -9,7 +9,9 @@ describe('UserController', () => {
     let mockFastify: FastifyInstance;
 
     beforeEach(() => {
-        const mockUserService = new UserService(mockFastify as unknown as FastifyInstance);
+        const mockUserService = new UserService(
+            mockFastify as unknown as FastifyInstance,
+        );
         mockUserService.createUser = jest.fn().mockResolvedValue('123');
         userController = new UserController(mockUserService);
     });

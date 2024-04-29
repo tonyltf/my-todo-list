@@ -19,8 +19,19 @@ export interface Todo {
     updatedAt: Date;
 }
 
-export type NewTodo = Partial<Pick<Todo, 'id'>> & Pick<Todo, 'name' | 'userId' | 'isCompleted' | 'completedAt' | 'createdAt' | 'updatedAt'>;
+export type NewTodo = Partial<Pick<Todo, 'id'>> &
+    Pick<
+        Todo,
+        | 'name'
+        | 'userId'
+        | 'isCompleted'
+        | 'completedAt'
+        | 'createdAt'
+        | 'updatedAt'
+    >;
 
 export type CreateTodoBody = Pick<Todo, 'name'>;
 
-export type UpdateTodoBody = Partial<Pick<Todo, 'name' | 'isCompleted' | 'isEnabled'>>;
+export type UpdateTodoBody = Partial<
+    Pick<Todo, 'name' | 'isCompleted' | 'isEnabled'>
+>;

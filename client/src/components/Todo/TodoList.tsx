@@ -10,8 +10,11 @@ import { useQuery } from '@tanstack/react-query';
 import { TodoItem } from './TodoItem';
 import { AddTodoItem } from './AddTodoItem';
 
-export const TodoList: React.FC<{ userId: string }> = ({ userId }: { userId: string }) => {
-
+export const TodoList: React.FC<{ userId: string }> = ({
+    userId,
+}: {
+    userId: string;
+}) => {
     const context = useContext(TodoContext);
     if (!context) {
         throw new Error('TodoList must be used within a TodoProvider');
@@ -47,7 +50,7 @@ export const TodoList: React.FC<{ userId: string }> = ({ userId }: { userId: str
             footer={<AddTodoItem />}
             bordered
             size="large"
-            grid={{ column: 1 }}        
+            grid={{ column: 1 }}
             dataSource={state.todos}
             renderItem={(todo) => <TodoItem item={todo} />}
         />

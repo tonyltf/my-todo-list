@@ -16,14 +16,18 @@ describe('TodoController', () => {
                 connect: jest.fn().mockResolvedValue({
                     query: jest.fn().mockResolvedValue([
                         { id: 1, title: 'Learn Jest' },
-                        { id: 2, title: 'Write Tests' }
+                        { id: 2, title: 'Write Tests' },
                     ]),
                 }),
             },
         };
 
-        const mockTodoService = new TodoService(mockFastify as unknown as FastifyInstance);
-        mockTodoService.getTodoForUser = jest.fn().mockResolvedValue([{ id: 1, title: 'Test Todo' }]);
+        const mockTodoService = new TodoService(
+            mockFastify as unknown as FastifyInstance,
+        );
+        mockTodoService.getTodoForUser = jest
+            .fn()
+            .mockResolvedValue([{ id: 1, title: 'Test Todo' }]);
 
         todoController = new TodoController(mockTodoService);
     });
@@ -78,15 +82,15 @@ describe('TodoController', () => {
             const todoService = {
                 getTodoForUser: jest.fn().mockResolvedValue([
                     {
-                        'id': '76fc0630-1870-416d-b930-a81e9cd7c9f8',
-                        'name': 'hello 1',
-                        'is_completed': false,
-                        'created_at': '2024-04-20T14:41:30.566Z',
-                        'updated_at': '2024-04-20T14:41:30.566Z',
-                        'user_id': '81ea0c12-8f25-450e-bdc2-2c67f7ba1001',
-                        'is_enabled': true,
-                        'completed_at': ''
-                    }
+                        id: '76fc0630-1870-416d-b930-a81e9cd7c9f8',
+                        name: 'hello 1',
+                        is_completed: false,
+                        created_at: '2024-04-20T14:41:30.566Z',
+                        updated_at: '2024-04-20T14:41:30.566Z',
+                        user_id: '81ea0c12-8f25-450e-bdc2-2c67f7ba1001',
+                        is_enabled: true,
+                        completed_at: '',
+                    },
                 ]),
             } as unknown as TodoService;
 
@@ -97,19 +101,23 @@ describe('TodoController', () => {
             await todoController.getTodo(request, reply);
 
             // Verify that the todoService.getTodoForUser method was called with the correct userId
-            expect(todoService.getTodoForUser).toHaveBeenCalledWith({ userId: '123' });
+            expect(todoService.getTodoForUser).toHaveBeenCalledWith({
+                userId: '123',
+            });
 
             // Verify that the reply.send method was called with the correct todo items
-            expect(reply.status(200).send).toHaveBeenCalledWith([{
-                'id': '76fc0630-1870-416d-b930-a81e9cd7c9f8',
-                'name': 'hello 1',
-                'isCompleted': false,
-                'createdAt': '2024-04-20T14:41:30.566Z',
-                'updatedAt': '2024-04-20T14:41:30.566Z',
-                'userId': '81ea0c12-8f25-450e-bdc2-2c67f7ba1001',
-                'isEnabled': true,
-                'completedAt': ''
-            }]);
+            expect(reply.status(200).send).toHaveBeenCalledWith([
+                {
+                    id: '76fc0630-1870-416d-b930-a81e9cd7c9f8',
+                    name: 'hello 1',
+                    isCompleted: false,
+                    createdAt: '2024-04-20T14:41:30.566Z',
+                    updatedAt: '2024-04-20T14:41:30.566Z',
+                    userId: '81ea0c12-8f25-450e-bdc2-2c67f7ba1001',
+                    isEnabled: true,
+                    completedAt: '',
+                },
+            ]);
         });
     });
 
@@ -124,7 +132,10 @@ describe('TodoController', () => {
                     // Provide the necessary properties for the todoData object
                     // based on the CreateTodoBody type
                 },
-            } as FastifyRequest<{ Params: { userId: string }; Body: CreateTodoBody }>;
+            } as FastifyRequest<{
+                Params: { userId: string };
+                Body: CreateTodoBody;
+            }>;
 
             const reply = {
                 status: jest.fn().mockReturnValue({
@@ -160,14 +171,14 @@ describe('TodoController', () => {
 
             // Verify that the reply.status(201).send method was called with the correct response
             expect(reply.status(201).send).toHaveBeenCalledWith({
-                'completedAt': null,
-                'createdAt': new Date('2024-04-20T14:41:30.566Z'),
-                'id': 'newTodoId',
-                'isCompleted': false,
-                'isEnabled': true,
-                'name': 'New Todo',
-                'updatedAt': new Date('2024-04-20T14:41:30.566Z'),
-                'userId': 'useId',
+                completedAt: null,
+                createdAt: new Date('2024-04-20T14:41:30.566Z'),
+                id: 'newTodoId',
+                isCompleted: false,
+                isEnabled: true,
+                name: 'New Todo',
+                updatedAt: new Date('2024-04-20T14:41:30.566Z'),
+                userId: 'useId',
             });
         });
     });
@@ -184,7 +195,10 @@ describe('TodoController', () => {
                     name: 'Updated Todo',
                     isCompleted: true,
                 },
-            } as FastifyRequest<{ Params: { userId: string; todoId: string }; Body: UpdateTodoBody }>;
+            } as FastifyRequest<{
+                Params: { userId: string; todoId: string };
+                Body: UpdateTodoBody;
+            }>;
 
             const reply = {
                 status: jest.fn().mockReturnValue({
@@ -210,7 +224,10 @@ describe('TodoController', () => {
             await todoController.updateTodo(request, reply);
 
             // Verify that the todoService.getTodoById method was called with the correct userId and todoId
-            expect(todoService.getTodoById).toHaveBeenCalledWith({ userId: '123', todoId: '456' });
+            expect(todoService.getTodoById).toHaveBeenCalledWith({
+                userId: '123',
+                todoId: '456',
+            });
 
             // Verify that the todoService.updateTodo method was called with the correct userId, todoId, and todoData
             expect(todoService.updateTodo).toHaveBeenCalledWith({
@@ -238,7 +255,10 @@ describe('TodoController', () => {
                     name: 'Updated Todo',
                     isCompleted: true,
                 },
-            } as FastifyRequest<{ Params: { userId: string; todoId: string }; Body: UpdateTodoBody }>;
+            } as FastifyRequest<{
+                Params: { userId: string; todoId: string };
+                Body: UpdateTodoBody;
+            }>;
 
             const reply = {
                 status: jest.fn().mockReturnValue({
@@ -258,10 +278,15 @@ describe('TodoController', () => {
             await todoController.updateTodo(request, reply);
 
             // Verify that the todoService.getTodoById method was called with the correct userId and todoId
-            expect(todoService.getTodoById).toHaveBeenCalledWith({ userId: '123', todoId: '456' });
+            expect(todoService.getTodoById).toHaveBeenCalledWith({
+                userId: '123',
+                todoId: '456',
+            });
 
             // Verify that the reply.status(404).send method was called with the correct response
-            expect(reply.status(404).send).toHaveBeenCalledWith({ message: 'Todo not found' });
+            expect(reply.status(404).send).toHaveBeenCalledWith({
+                message: 'Todo not found',
+            });
         });
     });
 
@@ -274,7 +299,9 @@ describe('TodoController', () => {
                         userId: '123',
                         todoId: '456',
                     },
-                } as FastifyRequest<{ Params: { userId: string; todoId: string } }>;
+                } as FastifyRequest<{
+                    Params: { userId: string; todoId: string };
+                }>;
 
                 const reply = {
                     status: jest.fn().mockReturnValue({
@@ -300,10 +327,16 @@ describe('TodoController', () => {
                 await todoController.deleteTodo(request, reply);
 
                 // Verify that the todoService.getTodoById method was called with the correct userId and todoId
-                expect(todoService.getTodoById).toHaveBeenCalledWith({ userId: '123', todoId: '456' });
+                expect(todoService.getTodoById).toHaveBeenCalledWith({
+                    userId: '123',
+                    todoId: '456',
+                });
 
                 // Verify that the todoService.deleteTodo method was called with the correct userId and todoId
-                expect(todoService.deleteTodo).toHaveBeenCalledWith({ userId: '123', todoId: '456' });
+                expect(todoService.deleteTodo).toHaveBeenCalledWith({
+                    userId: '123',
+                    todoId: '456',
+                });
 
                 // Verify that the reply.status(204).send method was called
                 expect(reply.status(204).send).toHaveBeenCalled();
@@ -316,7 +349,9 @@ describe('TodoController', () => {
                         userId: '123',
                         todoId: '456',
                     },
-                } as FastifyRequest<{ Params: { userId: string; todoId: string } }>;
+                } as FastifyRequest<{
+                    Params: { userId: string; todoId: string };
+                }>;
 
                 const reply = {
                     status: jest.fn().mockReturnValue({
@@ -336,10 +371,15 @@ describe('TodoController', () => {
                 await todoController.deleteTodo(request, reply);
 
                 // Verify that the todoService.getTodoById method was called with the correct userId and todoId
-                expect(todoService.getTodoById).toHaveBeenCalledWith({ userId: '123', todoId: '456' });
+                expect(todoService.getTodoById).toHaveBeenCalledWith({
+                    userId: '123',
+                    todoId: '456',
+                });
 
                 // Verify that the reply.status(404).send method was called with the correct response
-                expect(reply.status(404).send).toHaveBeenCalledWith({ message: 'Todo not found' });
+                expect(reply.status(404).send).toHaveBeenCalledWith({
+                    message: 'Todo not found',
+                });
             });
         });
     });

@@ -1,6 +1,6 @@
-import { FastifyReply, FastifyRequest } from "fastify";
+import { FastifyReply, FastifyRequest } from 'fastify';
 
-import { UserService } from "../services/user.service";
+import { UserService } from '../services/user.service';
 
 export class UserController {
     userService: UserService;
