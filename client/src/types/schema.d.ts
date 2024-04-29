@@ -4,246 +4,244 @@
  * Do not make direct changes to the file.
  */
 
-
 export interface paths {
-  "/health": {
-    get: {
-      responses: {
-        /** @description Default Response */
-        200: {
-          content: never;
+    '/health': {
+        get: {
+            responses: {
+                /** @description Default Response */
+                200: {
+                    content: never;
+                };
+            };
         };
-      };
     };
-  };
-  "/v1/users": {
-    /**
-     * Create a new user if it does not exist
-     * @description Create user
-     */
-    post: {
-      requestBody?: {
-        content: {
-          "application/json": Record<string, never>;
-        };
-      };
-      responses: {
-        /** @description Successful response */
-        201: {
-          content: {
-            "application/json": {
-              id: string;
+    '/v1/users': {
+        /**
+         * Create a new user if it does not exist
+         * @description Create user
+         */
+        post: {
+            requestBody?: {
+                content: {
+                    'application/json': Record<string, never>;
+                };
             };
-          };
+            responses: {
+                /** @description Successful response */
+                201: {
+                    content: {
+                        'application/json': {
+                            id: string;
+                        };
+                    };
+                };
+            };
         };
-      };
     };
-  };
-  "/v1/user/{userId}/todos": {
-    /**
-     * Get all todo for a specific user
-     * @description Get todo
-     */
-    get: {
-      parameters: {
-        path: {
-          userId: string;
-        };
-      };
-      responses: {
-        /** @description Default Response */
-        200: {
-          content: {
-            "application/json": ({
-              /** Format: uuid */
-              id: string;
-              name: string;
-              /** Format: uuid */
-              userId: string;
-              isEnabled: boolean;
-              isCompleted: boolean;
-              /** Format: date-time */
-              completedAt: string | null;
-              /** Format: date-time */
-              createdAt: string;
-              /** Format: date-time */
-              updatedAt: string;
-            })[];
-          };
-        };
-        /** @description Bad request */
-        400: {
-          content: {
-            "application/json": {
-              error?: string;
-              details?: unknown[];
+    '/v1/user/{userId}/todos': {
+        /**
+         * Get all todo for a specific user
+         * @description Get todo
+         */
+        get: {
+            parameters: {
+                path: {
+                    userId: string;
+                };
             };
-          };
-        };
-        /** @description Not found */
-        404: {
-          content: {
-            "application/json": {
-              message?: string;
+            responses: {
+                /** @description Default Response */
+                200: {
+                    content: {
+                        'application/json': {
+                            /** Format: uuid */
+                            id: string;
+                            name: string;
+                            /** Format: uuid */
+                            userId: string;
+                            isEnabled: boolean;
+                            isCompleted: boolean;
+                            /** Format: date-time */
+                            completedAt: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                        }[];
+                    };
+                };
+                /** @description Bad request */
+                400: {
+                    content: {
+                        'application/json': {
+                            error?: string;
+                            details?: unknown[];
+                        };
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    content: {
+                        'application/json': {
+                            message?: string;
+                        };
+                    };
+                };
             };
-          };
         };
-      };
+        /**
+         * Create a new todo for a specific user
+         * @description Create todo
+         */
+        post: {
+            parameters: {
+                path: {
+                    userId: string;
+                };
+            };
+            requestBody: {
+                content: {
+                    'application/json': {
+                        name: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Successful response */
+                201: {
+                    content: {
+                        'application/json': {
+                            id: string;
+                            name: string;
+                            userId: string;
+                            isEnabled: boolean;
+                            isCompleted: boolean;
+                            /** Format: date-time */
+                            completedAt: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                        };
+                    };
+                };
+                /** @description Bad request */
+                400: {
+                    content: {
+                        'application/json': {
+                            error?: string;
+                            details?: unknown[];
+                        };
+                    };
+                };
+                /** @description Failed to create todo */
+                500: {
+                    content: {
+                        'application/json': {
+                            message?: string;
+                        };
+                    };
+                };
+            };
+        };
     };
-    /**
-     * Create a new todo for a specific user
-     * @description Create todo
-     */
-    post: {
-      parameters: {
-        path: {
-          userId: string;
-        };
-      };
-      requestBody: {
-        content: {
-          "application/json": {
-            name: string;
-          };
-        };
-      };
-      responses: {
-        /** @description Successful response */
-        201: {
-          content: {
-            "application/json": {
-              id: string;
-              name: string;
-              userId: string;
-              isEnabled: boolean;
-              isCompleted: boolean;
-              /** Format: date-time */
-              completedAt: string | null;
-              /** Format: date-time */
-              createdAt: string;
-              /** Format: date-time */
-              updatedAt: string;
+    '/v1/user/{userId}/todos/{todoId}': {
+        /**
+         * Delete a specific todo
+         * @description Delete todo
+         */
+        delete: {
+            parameters: {
+                path: {
+                    userId: string;
+                    todoId: string;
+                };
             };
-          };
-        };
-        /** @description Bad request */
-        400: {
-          content: {
-            "application/json": {
-              error?: string;
-              details?: unknown[];
+            responses: {
+                /** @description Successful response */
+                204: {
+                    content: {
+                        'application/json': Record<string, never>;
+                    };
+                };
+                /** @description Bad request */
+                400: {
+                    content: {
+                        'application/json': {
+                            error?: string;
+                            details?: unknown[];
+                        };
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    content: {
+                        'application/json': {
+                            message?: string;
+                        };
+                    };
+                };
             };
-          };
         };
-        /** @description Failed to create todo */
-        500: {
-          content: {
-            "application/json": {
-              message?: string;
+        /**
+         * Update a specific todo
+         * @description Update todo
+         */
+        patch: {
+            parameters: {
+                path: {
+                    userId: string;
+                    todoId: string;
+                };
             };
-          };
+            requestBody?: {
+                content: {
+                    'application/json': {
+                        name?: string;
+                        isCompleted?: boolean;
+                    };
+                };
+            };
+            responses: {
+                /** @description Successful response */
+                204: {
+                    content: {
+                        'application/json': {
+                            id?: string;
+                        };
+                    };
+                };
+                /** @description Bad request */
+                400: {
+                    content: {
+                        'application/json': {
+                            error?: string;
+                            details?: unknown[];
+                        };
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    content: {
+                        'application/json': {
+                            message?: string;
+                        };
+                    };
+                };
+            };
         };
-      };
     };
-  };
-  "/v1/user/{userId}/todos/{todoId}": {
-    /**
-     * Delete a specific todo
-     * @description Delete todo
-     */
-    delete: {
-      parameters: {
-        path: {
-          userId: string;
-          todoId: string;
-        };
-      };
-      responses: {
-        /** @description Successful response */
-        204: {
-          content: {
-            "application/json": Record<string, never>;
-          };
-        };
-        /** @description Bad request */
-        400: {
-          content: {
-            "application/json": {
-              error?: string;
-              details?: unknown[];
-            };
-          };
-        };
-        /** @description Not found */
-        404: {
-          content: {
-            "application/json": {
-              message?: string;
-            };
-          };
-        };
-      };
-    };
-    /**
-     * Update a specific todo
-     * @description Update todo
-     */
-    patch: {
-      parameters: {
-        path: {
-          userId: string;
-          todoId: string;
-        };
-      };
-      requestBody?: {
-        content: {
-          "application/json": {
-            name?: string;
-            isCompleted?: boolean;
-          };
-        };
-      };
-      responses: {
-        /** @description Successful response */
-        204: {
-          content: {
-            "application/json": {
-              id?: string;
-            };
-          };
-        };
-        /** @description Bad request */
-        400: {
-          content: {
-            "application/json": {
-              error?: string;
-              details?: unknown[];
-            };
-          };
-        };
-        /** @description Not found */
-        404: {
-          content: {
-            "application/json": {
-              message?: string;
-            };
-          };
-        };
-      };
-    };
-  };
 }
 
 export type webhooks = Record<string, never>;
 
 export interface components {
-  schemas: {
-  };
-  responses: never;
-  parameters: never;
-  requestBodies: never;
-  headers: never;
-  pathItems: never;
+    schemas: {};
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
 }
 
 export type $defs = Record<string, never>;

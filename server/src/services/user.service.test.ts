@@ -20,7 +20,9 @@ describe('UserService', () => {
             } as unknown as PostgresDb & Record<string, PostgresDb>,
         } as unknown as FastifyInstance;
 
-        userService = new UserService(mockFastify as unknown as FastifyInstance);
+        userService = new UserService(
+            mockFastify as unknown as FastifyInstance,
+        );
     });
 
     describe('createUser', () => {
@@ -32,7 +34,9 @@ describe('UserService', () => {
             expect(mockFastify.pg.connect).toHaveBeenCalled();
 
             // Verify that the client.query method was called with the correct SQL query
-            expect((await mockFastify.pg.connect()).query).toHaveBeenCalledWith('INSERT INTO "user" (created_at, updated_at) VALUES (current_timestamp, current_timestamp) RETURNING id');
+            expect((await mockFastify.pg.connect()).query).toHaveBeenCalledWith(
+                'INSERT INTO "user" (created_at, updated_at) VALUES (current_timestamp, current_timestamp) RETURNING id',
+            );
 
             // Verify that the user ID is returned correctly
             expect(userId).toBe('123');
